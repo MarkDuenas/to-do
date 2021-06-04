@@ -2,9 +2,9 @@
 
 ## Author: Mark Duenas
 
-[Deployed Link](https://blissful-joliot-216127.netlify.app/)
+[Deployed Link](https://nervous-dijkstra-c75e51.netlify.app/)
 
-[Pull Req](https://github.com/MarkDuenas/resty/pull/2)
+[Pull Req](https://github.com/MarkDuenas/to-do/pull/1)
 
 ## Set up
 
