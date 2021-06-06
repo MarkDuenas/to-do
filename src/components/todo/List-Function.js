@@ -1,23 +1,40 @@
 import React from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
-import { ListGroup } from "react-bootstrap";
+import { Toast, Badge } from "react-bootstrap";
 
 function List(props) {
   return (
-    <ListGroup data-testid='list-group'>
+    <>
       {props.list.map((item) => (
-        <ListGroup.Item
-          className='list-item'
-          data-testid='list-item'
-          onClick={() => props.handleComplete(item._id)}
-          variant={item.complete ? "success" : "dark"}
-          style={{ textDecoration: item.complete ? "line-through" : "" }}
-          key={item._id}
-        >
-          {item.text}
-        </ListGroup.Item>
+        <Toast key={item._id}>
+          <Toast.Header closeButton={false}>
+            <Badge pill variant={item.complete ? "success" : "danger"}>
+              {item.complete ? "Complete" : "Pending"}
+            </Badge>
+            <strong className='mr-auto'>{item.assignee}</strong>
+            <button
+              type='button'
+              class='close ml-2 mb-1'
+              data-dismiss='toast'
+              onClick={() => props.handleDelete(item._id)}
+            >
+              <span aria-hidden='true'>×</span>
+              <span class='sr-only'>Close</span>
+            </button>
+          </Toast.Header>
+          <Toast.Body
+            className='list-item'
+            data-testid='list-item'
+            onClick={() => props.handleComplete(item._id)}
+            style={{ textDecoration: item.complete ? "line-through" : "" }}
+          >
+            {item.text}
+            <br />
+            <small> Difficulty: {item.difficulty}</small>
+          </Toast.Body>
+        </Toast>
       ))}
-    </ListGroup>
+    </>
   );
 }
 
