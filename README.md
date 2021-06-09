@@ -2,7 +2,7 @@
 
 ## Author: Mark Duenas
 
-[Deployed Link](https://app.netlify.com/sites/todo-app-simple/overview)
+[Deployed Link](https://todo-app-simple.netlify.app/)
 
 [Pull Req](https://github.com/MarkDuenas/to-do/pull/1)
 
