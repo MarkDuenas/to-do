@@ -2,7 +2,7 @@
 
 ## Author: Mark Duenas
 
-[Deployed Link](https://nervous-dijkstra-c75e51.netlify.app/)
+[Deployed Link](https://app.netlify.com/sites/todo-app-simple/overview)
 
 [Pull Req](https://github.com/MarkDuenas/to-do/pull/1)
 
