@@ -12,6 +12,8 @@ const todoAPI = "https://api-js401.herokuapp.com/api/v1/todo";
 function Todo(props) {
   const [list, setList] = useState([]);
   const [listCount, setListCount] = useState(0);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [todoPerPage, setTodoPerPage] = useState(3);
 
   const addItem = async (item) => {
     try {
@@ -57,9 +59,14 @@ function Todo(props) {
 
   // GET THE LIST OF TODOs from API
   useEffect(async () => {
-    const response = await axios.get(todoAPI);
-    const getList = response.data.results;
-    setList(getList);
+    try {
+      const response = await axios.get(todoAPI);
+      const getList = response.data.results;
+
+      setList(getList);
+    } catch (e) {
+      console.error(e);
+    }
   }, []);
 
   useEffect(() => {
@@ -67,6 +74,15 @@ function Todo(props) {
 
     setListCount(count);
   }, [list]);
+
+  // pagination
+  const indexOfLastTodo = currentPage * todoPerPage;
+  const indexOfFirstTodo = indexOfLastTodo - todoPerPage;
+  const currentTodos = list.slice(indexOfFirstTodo, indexOfLastTodo);
+
+  const changePage = (page) => {
+    setCurrentPage(page);
+  };
 
   return (
     <>
@@ -93,7 +109,11 @@ function Todo(props) {
             <Col xs={6} md={8}>
               <div className='list'>
                 <TodoList
-                  list={list}
+                  changePage={changePage}
+                  currentPage={currentPage}
+                  todoPerPage={todoPerPage}
+                  totalTodo={list.length}
+                  list={currentTodos}
                   handleComplete={toggleComplete}
                   handleDelete={deleteItem}
                 />
