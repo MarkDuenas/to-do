@@ -1,8 +1,12 @@
-import React from "react";
+import React, { useContext } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Toast, Badge, Pagination } from "react-bootstrap";
+import Auth from "../../auth/Auth.js";
+import { LoginContext } from "../../context/LoginProvider.js";
 
 function List(props) {
+  const userContext = useContext(LoginContext);
+
   let items = [];
 
   for (
@@ -29,20 +33,27 @@ function List(props) {
             <Badge
               pill
               variant={item.complete ? "success" : "danger"}
-              onClick={() => props.handleComplete(item._id)}
+              onClick={
+                userContext.user.access &&
+                userContext.user.access.includes("update")
+                  ? () => props.handleComplete(item._id)
+                  : () => console.log("Sorry you cant do this.")
+              }
             >
               {item.complete ? "Complete" : "Pending"}
             </Badge>
             <strong className='mr-auto'>{item.assignee}</strong>
-            <button
-              type='button'
-              class='close ml-2 mb-1'
-              data-dismiss='toast'
-              onClick={() => props.handleDelete(item._id)}
-            >
-              <span aria-hidden='true'>×</span>
-              <span class='sr-only'>Close</span>
-            </button>
+            <Auth capability='delete'>
+              <button
+                type='button'
+                class='close ml-2 mb-1'
+                data-dismiss='toast'
+                onClick={() => props.handleDelete(item._id)}
+              >
+                <span aria-hidden='true'>×</span>
+                <span class='sr-only'>Close</span>
+              </button>
+            </Auth>
           </Toast.Header>
           <Toast.Body
             className='list-item'
