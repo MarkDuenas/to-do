@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import Form from "./Form-Function.js";
 import TodoList from "./List-Function";
+import { LoginContext } from "../../context/LoginProvider.js";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Col, Container, Navbar, Row } from "react-bootstrap";
 
 import axios from "axios";
 import "./todo.scss";
+import Auth from "../../auth/Auth.js";
 
 const todoAPI = "https://api-js401.herokuapp.com/api/v1/todo";
 
@@ -14,6 +16,8 @@ function Todo(props) {
   const [listCount, setListCount] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [todoPerPage, setTodoPerPage] = useState(3);
+
+  const userContext = useContext(LoginContext);
 
   const addItem = async (item) => {
     try {
@@ -86,42 +90,46 @@ function Todo(props) {
 
   return (
     <>
-      <Container>
-        <Row>
-          <Col>
-            <header>
-              <Navbar bg='dark' variant='dark' className='nav'>
-                <Navbar.Brand as='h2' data-testid='title'>
-                  There are {listCount} Items To Complete
-                </Navbar.Brand>
-              </Navbar>
-            </header>
-          </Col>
-        </Row>
-        <section className='todo'>
+      {userContext.isLoggedIn && (
+        <Container>
           <Row>
-            <Col xs={6} md={4}>
-              <div>
-                <Form handleSubmit={addItem} />
-              </div>
-            </Col>
-
-            <Col xs={6} md={8}>
-              <div className='list'>
-                <TodoList
-                  changePage={changePage}
-                  currentPage={currentPage}
-                  todoPerPage={todoPerPage}
-                  totalTodo={list.length}
-                  list={currentTodos}
-                  handleComplete={toggleComplete}
-                  handleDelete={deleteItem}
-                />
-              </div>
+            <Col>
+              <header>
+                <Navbar bg='dark' variant='dark' className='nav'>
+                  <Navbar.Brand as='h2' data-testid='title'>
+                    There are {listCount} Items To Complete
+                  </Navbar.Brand>
+                </Navbar>
+              </header>
             </Col>
           </Row>
-        </section>
-      </Container>
+          <section className='todo'>
+            <Row>
+              <Col xs={6} md={4}>
+                <div>
+                  <Auth capability='create'>
+                    <Form handleSubmit={addItem} />
+                  </Auth>
+                </div>
+              </Col>
+
+              <Col xs={6} md={8}>
+                <div className='list'>
+                  <TodoList
+                    changePage={changePage}
+                    currentPage={currentPage}
+                    todoPerPage={todoPerPage}
+                    totalTodo={list.length}
+                    list={currentTodos}
+                    handleComplete={toggleComplete}
+                    handleDelete={deleteItem}
+                  />
+                </div>
+              </Col>
+            </Row>
+          </section>
+        </Container>
+      )}
     </>
   );
 }

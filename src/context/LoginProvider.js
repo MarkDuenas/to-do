@@ -3,6 +3,7 @@ import React, { useState, useEffect, createContext } from "react";
 import jwt from "jsonwebtoken";
 import cookie from "react-cookies";
 import axios from "axios";
+import base64 from "base-64";
 
 export const LoginContext = createContext();
 
@@ -14,6 +15,7 @@ const LoginProvider = (props) => {
   const validateToken = (token) => {
     try {
       const tokenUser = jwt.verify(token, process.env.REACT_APP_SECRET);
+      console.log(tokenUser);
       setIsLoggedIn(true);
       setUser(tokenUser);
       cookie.save("auth", token);
@@ -26,21 +28,44 @@ const LoginProvider = (props) => {
 
   const login = async (input) => {
     const API = `${process.env.REACT_APP_API}/signin`;
+    const auth = base64.encode(`${input.username}:${input.password}`);
     try {
-      const response = await axios.post(API, input);
+      const response = await axios.post(API, input, {
+        headers: { authorization: `Basic ${auth}` },
+      });
 
-      const { token } = response.body;
+      const { token } = response.data;
 
       validateToken(token);
     } catch (e) {
-      console.warn("Login Attemp Failed");
+      console.warn("Login Attempt Failed");
+    }
+  };
+  const register = async (input) => {
+    console.log(input);
+    const newUser = {
+      username: input.registerUsername,
+      password: input.registerPassword,
+      role: input.role,
+    };
+    console.log(newUser);
+    const API = `${process.env.REACT_APP_API}/signup`;
+
+    try {
+      const response = await axios.post(API, newUser);
+
+      const { token } = response.data;
+
+      validateToken(token);
+    } catch (e) {
+      console.warn("Could not register user");
     }
   };
 
   useEffect(() => {
     const token = cookie.load("auth") || null;
     validateToken(token);
-  });
+  }, []);
 
   const logout = () => {
     setUser({});
@@ -49,11 +74,12 @@ const LoginProvider = (props) => {
   };
 
   const can = (permission) => {
-    return user.capabilities && user.capabilities.inclues(permission);
+    return user.access && user.access.includes(permission);
   };
 
   const globalContext = {
     login,
+    register,
     logout,
     can,
     user,
